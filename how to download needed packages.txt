@@ -1,0 +1,7 @@
+if (!require(devtools))
+  install.packages('devtools')
+devtools::install_github('leaflet-shiny', 'jcheng5')
+
+if (!require(maps))
+  install.packages('maps')
+devtools::install_github('ShinyDash', 'trestletech')
