@@ -54,3 +54,14 @@ qks <- toGeoJSON(data=quakes, dest=tempdir())
 head(qks)
 
 runApp("C://Users/Connor/Documents/School Work/stat 585/leaflet-shiny-master/inst/example")
+
+
+
+
+View(grad.merge)
+mapdata <- ddply(grad.merge,.(City,State),transform,count = NROW(piece))
+
+
+mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
+View(mapstuff)
+

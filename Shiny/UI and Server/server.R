@@ -2,11 +2,12 @@ library(shiny)
 
 
 inputData = grad.merge
-
+mapdata <- ddply(grad.merge,.(City,State),transform,count = NROW(piece))
+mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
 
 # Define server logic required to summarize and view the selected dataset
 shinyServer(function(input, output, session) {
-  
+
   map <- createLeafletMap(session, 'map')
   
   
@@ -23,6 +24,30 @@ shinyServer(function(input, output, session) {
   })
   
   
+  radiusFactorcalc<- reactive({ radiusFactor <- 100000 * as.numeric(input$radius)  })
+  
+  observe({
+    radiusFactor <- radiusFactorcalc()
+    map$clearShapes()
+    #cities <- topCitiesInBounds()
+    
+    if (nrow(mapstuff) == 0)
+      return()
+    
+    map$addCircle(
+      mapstuff$Lat,
+      mapstuff$Long,
+      sqrt(mapstuff[["count"]]) * radiusFactor / max(5, input$map_zoom)^2,
+      row.names(mapstuff),
+      list(
+        weight=1.2,
+        fill=TRUE,
+        color='#999933'
+      )
+    )
+  })
+  
+  
   College = c( "All", levels(unique(inputData$College)))
   
   observe({
@@ -33,7 +58,6 @@ shinyServer(function(input, output, session) {
 
 
   output$people1 = renderDataTable({
-    #df <- inputData
     df <- citiesInBounds()
     
     if (input$y12 == FALSE) {
@@ -65,7 +89,7 @@ shinyServer(function(input, output, session) {
     dfTable <- df[, c(6, 3, 2, 14, 7)]
     
     return(dfTable)
-    #print(df)
+    
 
  })
   
