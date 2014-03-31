@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
   })
   
   
-  radiusFactorcalc<- reactive({ radiusFactor <- 100000 * as.numeric(input$radius)  })
+  radiusFactorcalc<- reactive({ radiusFactor <- 100000 * (as.numeric(input$radius)^2 +1) })
   
   observe({
     radiusFactor <- radiusFactorcalc()

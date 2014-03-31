@@ -1,7 +1,9 @@
 library(ShinyDash)
 library(shiny)
+library(reshape2)
+library(plyr)
 library(leafletR)
-
+library(leaflet)
 
 inputData = grad.merge
 College = c( "All", levels(unique(inputData$College)))

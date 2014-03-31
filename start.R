@@ -6,6 +6,7 @@ library(shiny)
 library(reshape2)
 library(plyr)
 library(leafletR)
+library(leaflet)
 
 if (!require(devtools))
   install.packages('devtools')
