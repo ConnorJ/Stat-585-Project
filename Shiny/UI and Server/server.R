@@ -36,7 +36,7 @@ shinyServer(function(input, output, session) {
       df <- subset(df, Year != "2007-2008")
     }
     
-    if (input$College == "All" & input$Major == "All"){return(df)}
+    if (input$College == "All" & input$Major == "All"){df}
     
     if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
     
@@ -44,13 +44,13 @@ shinyServer(function(input, output, session) {
       df <- subset(df, College == input$College & Major == input$Major)
     }
     
+    df$Location <- paste(df$City, df$State)
+    dfTable <- df[, c(6, 3, 2, 14, 7)]
     
-    df <- df
-    
-    
+    return(dfTable)
     #print(df)
 
- })
+ },include.rownames=FALSE)
   
 
   })
