@@ -40,5 +40,6 @@ subset(grad.merge, Year != "2010-2012" )
 is.vector(unique(5,3,254,24,12,42,3))
 inputData <-grad.merge
 All <- c(0,0,0,0,0,"All",0,"All",0,0,0,0,0)
+levels(All)
 inputData = rbind(inputData,All)
 View(inputData)

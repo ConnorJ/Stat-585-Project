@@ -3,7 +3,7 @@ library(shiny)
 
 
 inputData = grad.merge
-College = unique(inputData$College)
+College = c( "All", levels(unique(inputData$College)))
 
 shinyUI(fluidPage(
   
@@ -21,20 +21,20 @@ shinyUI(fluidPage(
       checkboxInput("y11", "2010-11", TRUE),
       checkboxInput("y10", "2009-10", TRUE),
       checkboxInput("y09", "2008-09", TRUE),
-      checkboxInput("y08", "2007-08", TRUE),
-      
-      actionButton("goButton","Add to Route")
-    
+      checkboxInput("y08", "2007-08", TRUE)
       
       
-      ),
+      
+      
+      
+    ),
     
     
-    mainPanel(  tableOutput("people1"),
-                tableOutput("people2")
-              
-                )
+    mainPanel(  tableOutput("people1")
+                
+    )
   )
 ))
+
 
 

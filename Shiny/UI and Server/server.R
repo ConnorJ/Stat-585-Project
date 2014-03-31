@@ -6,37 +6,18 @@ inputData = grad.merge
 
 # Define server logic required to summarize and view the selected dataset
 shinyServer(function(input, output, session) {
-  College = unique(inputData$College)
+  College = c( "All", levels(unique(inputData$College)))
   
   observe({
-    Major = unique(subset(inputData, College == input$College)$Major)
+    dfmajor <- unique(subset(inputData, College == input$College))
+    Major = c( "All", levels(factor(dfmajor$Major)))
     updateSelectInput(session, "Major", choices = Major, selected="All")
   })
   
-
   
+  
+
   output$people1 = renderTable({
-    df <- inputData
-
-    if (input$College == "All" & input$Major == "All"){
-      df
-    } else {
-      if (input$Major == "All"){
-        df <- subset(df, College == input$College)
-      } 
-    }
-      
-      if (input$College != "All" & input$Major != "All"){
-        df <- subset(df, College == input$College | Major == input$Major)
-      }
-
-     
-
- })
-  
-  
-  
-  output$people2 = renderTable({
     df <- inputData
     
     if (input$y12 == FALSE) {
@@ -54,8 +35,23 @@ shinyServer(function(input, output, session) {
     if (input$y08 == FALSE) {
       df <- subset(df, Year != "2007-2008")
     }
-    df <- subset(df, College == input$College)   
-  })
+    
+    if (input$College == "All" & input$Major == "All"){return(df)}
+    
+    if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
+    
+    if (input$College != "All" & input$Major != "All"){
+      df <- subset(df, College == input$College & Major == input$Major)
+    }
+    
+    
+    df <- df
+    
+    
+    #print(df)
+
+ })
+  
 
   })
   
