@@ -6,6 +6,23 @@ inputData = grad.merge
 
 # Define server logic required to summarize and view the selected dataset
 shinyServer(function(input, output, session) {
+  
+  map <- createLeafletMap(session, 'map')
+  
+  
+  citiesInBounds <- reactive({
+    if (is.null(input$map_bounds))
+      return(inputData[FALSE,])
+    bounds <- input$map_bounds
+    latRng <- range(bounds$north, bounds$south)
+    lngRng <- range(bounds$east, bounds$west)
+    
+    subset(inputData,
+           Lat >= latRng[1] & Lat <= latRng[2] &
+             Long >= lngRng[1] & Long <= lngRng[2])
+  })
+  
+  
   College = c( "All", levels(unique(inputData$College)))
   
   observe({
@@ -13,50 +30,11 @@ shinyServer(function(input, output, session) {
     Major = c( "All", levels(factor(dfmajor$Major)))
     updateSelectInput(session, "Major", choices = Major, selected="All")
   })
-  
-  observe({
-    input$goButton
-    df <- inputData
-  
-  if (input$y12 == FALSE) {
-    df <- subset(df, Year != "2011-2012")
-  }
-  if (input$y11 == FALSE) {
-    df <- subset(df, Year != "2010-2011")
-  }
-  if (input$y10 == FALSE) {
-    df <- subset(df, Year != "2009-2010")
-  }
-  if (input$y09 == FALSE) {
-    df <- subset(df, Year != "2008-2009")
-  }
-  if (input$y08 == FALSE) {
-    df <- subset(df, Year != "2007-2008")
-  }
-  
-  if (input$College == "All" & input$Major == "All"){df}
-  
-  if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
-  
-  if (input$College != "All" & input$Major != "All"){
-    df <- subset(df, College == input$College & Major == input$Major)
-  }
-  
-  df$Location <- paste(df$City, df$State)
- # return(df)
 
-})
-  
-  
-  
-  
-  
-  
-  
-  ?renderDataTable
 
   output$people1 = renderDataTable({
-    df <- inputData
+    #df <- inputData
+    df <- citiesInBounds()
     
     if (input$y12 == FALSE) {
       df <- subset(df, Year != "2011-2012")

@@ -1,10 +1,11 @@
 # Prelimianry packages to install
 install.packages("reshape2")
 install.packages("shiny")
-
+install.packages("leafletR")
 library(shiny)
 library(reshape2)
 library(plyr)
+library(leafletR)
 
 if (!require(devtools))
   install.packages('devtools')
@@ -43,3 +44,13 @@ All <- c(0,0,0,0,0,"All",0,"All",0,0,0,0,0)
 levels(All)
 inputData = rbind(inputData,All)
 View(inputData)
+
+
+data(quakes)
+qks <- toGeoJSON(data=quakes, dest=tempdir())
+
+data(quakes)
+qks <- toGeoJSON(data=quakes, dest=tempdir())
+head(qks)
+
+runApp("C://Users/Connor/Documents/School Work/stat 585/leaflet-shiny-master/inst/example")

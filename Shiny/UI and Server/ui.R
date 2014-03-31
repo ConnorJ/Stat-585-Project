@@ -1,53 +1,28 @@
-
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
+library(ShinyDash)
 library(shiny)
-
+library(leafletR)
 
 
 inputData = grad.merge
 College = c( "All", levels(unique(inputData$College)))
 
 shinyUI(fluidPage(
+  
+  tags$head(tags$link(rel='stylesheet', type='text/css', href='styles.css')),
+  leafletMap(
+    "map", "100%", 400,
+    initialTileLayer = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
+    initialTileLayerAttribution = HTML('Maps by <a href="http://www.mapbox.com/">Mapbox</a>'),
+    options=list(
+      center = c(37.45, -93.85),
+      zoom = 4,
+      maxBounds = list(list(17, -180), list(59, 180))
+    )
+  ),
+  
+  
+  
+  
   
   # Application title
   titlePanel("Continuing the Adventure"),
