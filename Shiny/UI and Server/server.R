@@ -5,9 +5,11 @@ inputData = grad.merge
 mapdata <- ddply(grad.merge,.(City,State),transform,count = NROW(piece))
 mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
 
+
 # Define server logic required to summarize and view the selected dataset
 shinyServer(function(input, output, session) {
-
+  
+  
   map <- createLeafletMap(session, 'map')
   
   
@@ -23,14 +25,67 @@ shinyServer(function(input, output, session) {
              Long >= lngRng[1] & Long <= lngRng[2])
   })
   
+  filter <- reactive({  
+    df <- citiesInBounds()
+    if (input$y12 == FALSE) {
+      df <- subset(df, Year != "2011-2012")
+    }
+    if (input$y11 == FALSE) {
+      df <- subset(df, Year != "2010-2011")
+    }
+    if (input$y10 == FALSE) {
+      df <- subset(df, Year != "2009-2010")
+    }
+    if (input$y09 == FALSE) {
+      df <- subset(df, Year != "2008-2009")
+    }
+    if (input$y08 == FALSE) {
+      df <- subset(df, Year != "2007-2008")
+    }
+    if (input$College == "All" & input$Major == "All"){df}
+    if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
+    if (input$College != "All" & input$Major != "All"){
+      df <- subset(df, College == input$College & Major == input$Major)
+    }
+    df$Location <- paste(df$City, df$State)
+    return(df)
+  })
   
-  radiusFactorcalc<- reactive({ radiusFactor <- 100000 * (as.numeric(input$radius)^2 +1) })
+  mapfilter <- reactive({  
+    df <- inputData
+    if (input$y12 == FALSE) {
+      df <- subset(df, Year != "2011-2012")
+    }
+    if (input$y11 == FALSE) {
+      df <- subset(df, Year != "2010-2011")
+    }
+    if (input$y10 == FALSE) {
+      df <- subset(df, Year != "2009-2010")
+    }
+    if (input$y09 == FALSE) {
+      df <- subset(df, Year != "2008-2009")
+    }
+    if (input$y08 == FALSE) {
+      df <- subset(df, Year != "2007-2008")
+    }
+    if (input$College == "All" & input$Major == "All"){df}
+    if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
+    if (input$College != "All" & input$Major != "All"){
+      df <- subset(df, College == input$College & Major == input$Major)
+    }
+    df$Location <- paste(df$City, df$State)
+    return(df)
+  })
+  radiusFactorcalc<- reactive({ radiusFactor <- 50000 * (as.numeric(input$radius)^2 +1) })
   
   observe({
     radiusFactor <- radiusFactorcalc()
     map$clearShapes()
-    #cities <- topCitiesInBounds()
     
+    mapdffilter <- mapfilter()
+    mapdata <- ddply(mapdffilter,.(City,State),transform,count = NROW(piece))
+    mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
+    #cities <- topCitiesInBounds()
     if (nrow(mapstuff) == 0)
       return()
     
@@ -58,40 +113,22 @@ shinyServer(function(input, output, session) {
 
 
   output$people1 = renderDataTable({
-    df <- citiesInBounds()
-    
-    if (input$y12 == FALSE) {
-      df <- subset(df, Year != "2011-2012")
-    }
-    if (input$y11 == FALSE) {
-      df <- subset(df, Year != "2010-2011")
-    }
-    if (input$y10 == FALSE) {
-      df <- subset(df, Year != "2009-2010")
-    }
-    if (input$y09 == FALSE) {
-      df <- subset(df, Year != "2008-2009")
-    }
-    if (input$y08 == FALSE) {
-      df <- subset(df, Year != "2007-2008")
-    }
-    
-    if (input$College == "All" & input$Major == "All"){df}
-    
-    if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
-    
-    if (input$College != "All" & input$Major != "All"){
-      df <- subset(df, College == input$College & Major == input$Major)
-    }
-    
-    df$Location <- paste(df$City, df$State)
+    df <- filter()
   
     dfTable <- df[, c(6, 3, 2, 14, 7)]
     
     return(dfTable)
+    })
+  
+  output$companies1 = renderDataTable({
+    df <- filter()
+    df <- df[, c(6, 3, 2, 14, 7)]
+    ?count
     
-
- })
+    dfTable 
+    
+    return(dfTable)
+  })
   
 
   })
