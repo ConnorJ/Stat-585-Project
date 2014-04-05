@@ -1,5 +1,5 @@
 library(shiny)
-
+library(ggplot2)
 
 inputData = grad.merge
 mapdata <- ddply(grad.merge,.(City,State),transform,count = NROW(piece))
@@ -116,7 +116,7 @@ shinyServer(function(input, output, session) {
   output$people1 = renderDataTable({
     df <- filter()
   
-    dfTable <- df[, c(6, 3, 2, 14, 7)]
+    dfTable <- df[, c(6, 3, 2, 15, 7)]
     
     return(dfTable)
     })
@@ -124,12 +124,25 @@ shinyServer(function(input, output, session) {
   
   output$companies1 = renderTable({
     df  <- filter()
+    if (nrow(df)>0){
       df <- count(df,"Company")
       df <- df[order(df$freq, decreasing = TRUE),]
       colnames(df) <- c("Company","Employees")
-      df<- df[1:5,]    
-    return(df)
+      if (nrow(df)<5) {
+        df<- df[1:nrow(df),]
+        return(df)
+      } else {
+        df<- df[1:5,]
+        return(df)
+      }
+    } 
   },include.rownames=FALSE)
+  
+  output$plot1 = renderPlot({
+    df  <- filter()
+    print(qplot(data=df, x=Salary, geom="histogram", bin = 5000))
+    
+  })
   
 
   })

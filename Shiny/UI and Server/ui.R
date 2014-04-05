@@ -23,9 +23,6 @@ shinyUI(fluidPage(
   ),
   
   
-  
-  
-  
   # Application title
   titlePanel("Continuing the Adventure after Iowa State"),
   hr(),
@@ -47,8 +44,10 @@ shinyUI(fluidPage(
       hr(),
       sliderInput("radius", "Choose Circle Radius:", min=0, max=10, value=5),
       hr(),
-      tableOutput("companies1")
-      
+      h5("Top Employers in this Area"),
+      tableOutput("companies1"),
+      hr(),
+      plotOutput("plot1")
       
       
     ),

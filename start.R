@@ -42,4 +42,6 @@ View(grad.merge)
 # Run shiny application
 runApp("C://Users/Connor/Documents/GitHub/Stat-585-Project/Shiny/UI and Server")
 
+library(ggplot2)
+qplot(data=grad.merge, x=Salary, geom="histogram", bin = 3000)
 
