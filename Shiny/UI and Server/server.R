@@ -25,6 +25,7 @@ shinyServer(function(input, output, session) {
              Long >= lngRng[1] & Long <= lngRng[2])
   })
   
+  
   filter <- reactive({  
     df <- citiesInBounds()
     if (input$y12 == FALSE) {
@@ -120,15 +121,15 @@ shinyServer(function(input, output, session) {
     return(dfTable)
     })
   
-  output$companies1 = renderDataTable({
-    df <- filter()
-    df <- df[, c(6, 3, 2, 14, 7)]
-    ?count
-    
-    dfTable 
-    
-    return(dfTable)
-  })
+  
+  output$companies1 = renderTable({
+    df  <- filter()
+      df <- count(df,"Company")
+      df <- df[order(df$freq, decreasing = TRUE),]
+      colnames(df) <- c("Company","Employees")
+      df<- df[1:5,]    
+    return(df)
+  },include.rownames=FALSE)
   
 
   })

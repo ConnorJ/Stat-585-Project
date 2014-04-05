@@ -45,9 +45,9 @@ shinyUI(fluidPage(
       checkboxInput("y09", "2008-09", TRUE),
       checkboxInput("y08", "2007-08", TRUE),
       hr(),
-      sliderInput("radius", "Choose Circle Radius:", min=0, max=10, value=5)
-      
-      
+      sliderInput("radius", "Choose Circle Radius:", min=0, max=10, value=5),
+      hr(),
+      tableOutput("companies1")
       
       
       
@@ -56,8 +56,7 @@ shinyUI(fluidPage(
     
     mainPanel( 
       h4('Companies hiring in this area'),
-      dataTableOutput("people1")
-                
+      dataTableOutput("people1")                
     )
   )
 ))

@@ -42,3 +42,4 @@ View(grad.merge)
 # Run shiny application
 runApp("C://Users/Connor/Documents/GitHub/Stat-585-Project/Shiny/UI and Server")
 
+
