@@ -6,7 +6,10 @@ library(leafletR)
 library(leaflet)
 
 inputData = grad.merge
-College = c( "All", levels(unique(inputData$College)))
+# Put this back for multiple college
+#College = c( "All", levels(unique(inputData$College)))
+College = c( "All", unique(inputData$College))
+WorkType = c( "All", levels(unique(inputData$Work.Type)))
 
 shinyUI(fluidPage(
   
@@ -26,7 +29,7 @@ shinyUI(fluidPage(
   # Application title
   titlePanel("Continuing the Adventure after Iowa State"),
   hr(),
- 
+  
   
   # Sidebar with controls to select a dataset and specify the
   # number of observations to view
@@ -34,6 +37,7 @@ shinyUI(fluidPage(
     sidebarPanel(
       selectInput("College", "Choose a College", choices = College, selected= "All"),
       selectInput("Major", "Choose a Major", choices = NULL, selected="All" ),
+      selectInput("WorkType", "Type of Position", choices = WorkType, selected="All" ),
       hr(),
       ('Choose Years to Include:'),
       checkboxInput("y12", "2011-12", TRUE),
@@ -59,5 +63,3 @@ shinyUI(fluidPage(
     )
   )
 ))
-
-

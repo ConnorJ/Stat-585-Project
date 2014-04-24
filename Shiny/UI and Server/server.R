@@ -5,12 +5,16 @@ inputData = grad.merge
 mapdata <- ddply(grad.merge,.(City,State),transform,count = NROW(piece))
 mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
 
+i = 1
 
 # Define server logic required to summarize and view the selected dataset
 shinyServer(function(input, output, session) {
   
   
-  map <- createLeafletMap(session, 'map')
+ if(i ==1){
+   map <- createLeafletMap(session, 'map')
+   i <- i + 1
+ }  
   
   
   citiesInBounds <- reactive({
@@ -46,7 +50,7 @@ shinyServer(function(input, output, session) {
     if (input$College == "All" & input$Major == "All"){df}
     if (input$College != "All" & input$Major == "All"){df <- subset(df, College == input$College)}
     if (input$College != "All" & input$Major != "All"){
-      df <- subset(df, College == input$College & Major == input$Major)
+      df <- subset(df, College == input$College & Major.1.at.Graduation == input$Major | Major.2.at.Graduation == input$Major )
     }
     df$Location <- paste(df$City, df$State)
     return(df)
@@ -77,13 +81,15 @@ shinyServer(function(input, output, session) {
     df$Location <- paste(df$City, df$State)
     return(df)
   })
-  radiusFactorcalc<- reactive({ radiusFactor <- 50000 * (as.numeric(input$radius)^2 +1) })
+  
+  radiusFactorcalc<- reactive({ radiusFactor <- 5000 * (as.numeric(input$radius)^2 +1) })
   
   observe({
     radiusFactor <- radiusFactorcalc()
     map$clearShapes()
     
-    mapdffilter <- mapfilter()
+    mapdffilter <- filter()
+    #mapdffilter <- mapfilter()
     mapdata <- ddply(mapdffilter,.(City,State),transform,count = NROW(piece))
     mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
     #cities <- topCitiesInBounds()
@@ -107,27 +113,30 @@ shinyServer(function(input, output, session) {
   College = c( "All", levels(unique(inputData$College)))
   
   observe({
-    dfmajor <- unique(subset(inputData, College == input$College))
-    Major = c( "All", levels(factor(dfmajor$Major)))
+    dfmajor <- unique(subset(inputData, College == "College of Engineering"))
+    Major = c( "All", levels(dfmajor$Major.1.at.Graduation))
     updateSelectInput(session, "Major", choices = Major, selected="All")
   })
+  
 
 
+    
+    
   output$people1 = renderDataTable({
     df <- filter()
-  
+    
     dfTable <- df[, c(6, 3, 2, 15, 7)]
     
     return(dfTable)
-    })
+  })
   
   
   output$companies1 = renderTable({
-    df  <- filter()
+    df <- filter()
     if (nrow(df)>0){
-      df <- count(df,"Company")
+      df <- count(df,"Employer")
       df <- df[order(df$freq, decreasing = TRUE),]
-      colnames(df) <- c("Company","Employees")
+      colnames(df) <- c("Employer","Employees")
       if (nrow(df)<5) {
         df<- df[1:nrow(df),]
         return(df)
@@ -140,14 +149,14 @@ shinyServer(function(input, output, session) {
   
   output$plot1 = renderPlot({
     df  <- filter()
-    print(qplot(data=df, x=Salary, geom="histogram", bin = 5000))
+    if (nrow(df)>=5){
+      print(qplot(data=(subset(na.omit(grad.merge), grad.merge$Compensation != 0)), x=Compensation, geom="histogram", bin = 5000))
+    } else {print("Not Enough Data")}
     
   })
   
-
-  })
   
-
+})
 
 
 
