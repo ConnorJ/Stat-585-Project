@@ -1,6 +1,5 @@
 library(ShinyDash)
 library(shiny)
-library(reshape2)
 library(plyr)
 library(leafletR)
 library(leaflet)

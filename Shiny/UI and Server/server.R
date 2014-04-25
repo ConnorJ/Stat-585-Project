@@ -8,12 +8,9 @@ mapstuff <- mapdata[ ! duplicated( mapdata[ c("City" , "State") ] ) , ]
 
 # Define server logic required to summarize and view the selected dataset
 shinyServer(function(input, output, session) {
-  
-  
 
    map <- createLeafletMap(session, 'map')
 
-  
   citiesInBounds <- reactive({
     if (is.null(input$map_bounds))
       return(inputData[FALSE,])
@@ -41,19 +38,13 @@ shinyServer(function(input, output, session) {
     }
     df$Location <- paste(df$City, df$State)
     
-    
-    
-    
     output$people1 = renderDataTable({
-      
       dfTable <- df[, c(2, 7, 6, 3,4)]
-      
       return(dfTable)
     })
     
     
     output$companies1 = renderTable({
-
       if (nrow(df)>0){
         df <- count(df,"Employer")
         df <- df[order(df$freq, decreasing = TRUE),]
@@ -69,7 +60,6 @@ shinyServer(function(input, output, session) {
     },include.rownames=FALSE)
     
     output$plot1 = renderPlot({
-
       if (nrow(df)>=5){
         print(qplot(data=(subset(na.omit(df), df$Compensation <= 500000 )), x=Compensation, geom="density", bin = 5000, size = 2, ylab = "Count", fill = "white") +
                 xlim(0, 175000) + scale_size(guide = 'none') + guides(fill=FALSE) +
@@ -81,11 +71,9 @@ shinyServer(function(input, output, session) {
       
     })
     
-    
     return(df)
   })
   
-
   radiusFactorcalc<- reactive({ radiusFactor <- 5000 * (as.numeric(input$radius)^2 +1) })
   
   observe({
@@ -109,12 +97,10 @@ shinyServer(function(input, output, session) {
       )
     )
   })
-  
-  
-  College = c( "All", levels(unique(inputData$College)))
+
   
   observe({
-    dfmajor <- unique(subset(inputData, College == "College of Engineering"))
+    dfmajor <- unique(subset(inputData, College == inputData$College))
     Major = c( "All", levels(factor(dfmajor$Major.1.at.Graduation)))
     updateSelectInput(session, "Major", choices = Major, selected="All")
   })
