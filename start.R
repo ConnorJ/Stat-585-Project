@@ -18,10 +18,10 @@ devtools::install_github('ShinyDash', 'trestletech')
 
 # Melt lat and long into graduation data
 # location has the lat and long that I need to plot my data
-data <- read.csv("C://Users/Connor/Documents/GitHub/Stat-585-Project/data/locations.csv")
+data <- read.csv(file.choose())
 
 # Import Graduation placement data
-grad <- read.csv("C://Users/Connor/Documents/School Work/stat 585/Eng Job.csv")
+grad <- read.csv(file.choose())
 
 
 # Convert States full names to abbrevations
@@ -36,6 +36,7 @@ grad.merge <- merge(na.omit(grad), data, by = "loc")
 grad.merge$College <- "College of Engineering"
 
 grad.merge$Compensation[grad.merge$Compensation == ""] <- NA
+
 grad.merge$Compensation[grad.merge$Compensation == "0.00"] <- NA
 grad.merge$Compensation[grad.merge$Compensation == 0] <-NA
 grad.merge$Compensation <- gsub(",", "", grad.merge$Compensation, fixed = TRUE) 
@@ -44,6 +45,10 @@ grad.merge$Compensation <- gsub(".00", "", grad.merge$Compensation, fixed = TRUE
 
 grad.merge$Compensation <- as.numeric(grad.merge$Compensation)
 grad.merge$Compensation[grad.merge$Compensation <= 100] <- grad.merge$Compensation*40*52
+
+
+
+
 grad.merge$Compensation[grad.merge$Compensation == 0] <-NA
 
 
